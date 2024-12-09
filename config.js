@@ -23,7 +23,7 @@ export function createApp(dbconfig) {
 
   app.use(
     sessions({
-      secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
+      secret: "X4/xh69K]V;uQ)Ap",
       saveUninitialized: true,
       cookie: { maxAge: 86400000, secure: false },
       resave: false,
@@ -32,6 +32,21 @@ export function createApp(dbconfig) {
 
   app.locals.pool = pool;
 
+  app.get("/", async function (req, res) {
+    const recipes = await app.locals.pool.query(
+      "SELECT * FROM recipes INNER JOIN webusers ON recipes.user_id = webusers.id;"
+    );
+    res.render("start", { recipes: recipes.rows });
+  });
+
+  app.get("/recipe/:id", async function (req, res) {
+    const recipe = await app.locals.pool.query(
+      "SELECT * FROM recipes WHERE id = 1",
+      [req.params.id]
+    );
+    res.render("recipe", { recipe: recipe });
+  });
+
   app.get("/register", function (req, res) {
     res.render("register");
   });
@@ -39,8 +54,8 @@ export function createApp(dbconfig) {
   app.post("/register", function (req, res) {
     var password = bcrypt.hashSync(req.body.password, 10);
     pool.query(
-      "INSERT INTO users (username, password) VALUES ($1, $2)",
-      [req.body.username, password],
+      "INSERT INTO webusers (email, username, pwd) VALUES ($1, $2, $3)",
+      [req.body.username, req.body.email, password],
       (error, result) => {
         if (error) {
           console.log(error);
@@ -56,7 +71,7 @@ export function createApp(dbconfig) {
 
   app.post("/login", function (req, res) {
     pool.query(
-      "SELECT * FROM users WHERE username = $1",
+      "SELECT * FROM webusers WHERE username = $1",
       [req.body.username],
       (error, result) => {
         if (error) {

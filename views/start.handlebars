@@ -1,1 +1,13 @@
 <h1>Rezepte</h1>
+
+{{#each recipes}}
+  <a href="/recipe/{{id}}"><h1>{{title}}</h1></a>
+  <p>{{description}}</p>
+  <p>{{category}}</p>
+  <p>{{ingredients}}</p>
+  <p>{{steps}}</p>
+  <p>{{cooking_time}}</p>
+  <p>{{image_url}}</p>
+  <p>{{user_id}}</p>
+  <p>{{username}}</p>
+{{/each}}
